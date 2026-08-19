@@ -1,0 +1,6 @@
+employees.db
+__pycache__/
+.venv/
+.env/
+.pytest_cache/
+.idea/
