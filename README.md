@@ -38,3 +38,26 @@ Claude Desktop
       |
       v
    SQLite
+```
+
+server.py exposes the database functions as MCP tools.
+
+database.py handles the SQLite database operations.
+
+## Technologies
+
+- Python
+- SQLite
+- MCP / FastMCP
+- pytest
+- Git / GitHub
+
+## Testing
+
+This project includes 11 pytest tests covering database operations and employee queries.
+
+Tests are run with:
+
+```bash
+python -m pytest tests/test_database.py
+```
