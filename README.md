@@ -1,62 +1,85 @@
 # Employee Database MCP Server
 
-A small Python project that lets Claude Desktop interact with a SQLite employee database through the Model Context Protocol (MCP).
+An MCP (Model Context Protocol) server built with **FastMCP** and **SQLite** that enables AI clients (such as Claude Desktop and Cursor) to query, analyze, and update structured employee records using natural language.
 
-I built this project to learn how AI assistants can use external tools to retrieve and modify structured data.
+---
 
-## What it does
+## 🏗️ Architecture
 
-The server gives Claude a set of tools for working with employee data. For example, Claude can:
-
-- Add an employee
-- Find an employee by ID
-- Search for employees by name
-- List all employees
-- Update an employee's salary
-- Remove an employee
-- Find the highest-paid employee
-- Calculate the average salary
-- List company departments
-- Count employees by department
-- Get overall company statistics
-
-Because the tools are exposed through MCP, I can ask Claude questions in normal language instead of writing SQL queries myself.
-
-## How it works
-
-The project is split into three main parts:
-
-```text
-Claude Desktop
-      |
-      | MCP
-      v
-   server.py
-      |
-      v
-  database.py
-      |
-      v
-   SQLite
+```mermaid
+flowchart LR
+    A[Claude Desktop / LLM Client] -->|MCP Protocol via stdio| B[server.py / FastMCP]
+    B -->|Prepared Queries| C[database.py]
+    C -->|SQL Operations| D[(SQLite DB)]
 ```
 
-server.py exposes the database functions as MCP tools.
+---
 
-database.py handles the SQLite database operations.
+## ✨ Features & Exposed MCP Tools
 
-## Technologies
+The server exposes parameterized, injection-safe database functions directly to LLM clients:
 
-- Python
-- SQLite
-- MCP / FastMCP
-- pytest
-- Git / GitHub
+| Category | MCP Tool Name | Description |
+| :--- | :--- | :--- |
+| **Lookup & Search** | `get_employee_by_id`, `search_employees_by_name`, `list_employees` | Fetch individual records or query by name/pattern. |
+| **Data Operations** | `add_employee`, `update_employee_salary`, `remove_employee` | Perform CRUD mutations with input validation. |
+| **Analytics & Metrics**| `get_highest_paid_employee`, `calculate_average_salary`, `get_company_stats` | Aggregate salaries and generate company-wide statistics. |
+| **Department Info** | `list_departments`, `count_employees_by_department` | Group and summarize workforce distribution. |
 
-## Testing
+---
 
-This project includes 11 pytest tests covering database operations and employee queries.
+## 🛠️ Tech Stack
 
-Tests are run with:
+* **Language:** Python 3.10+
+* **Database:** SQLite
+* **Protocol:** Model Context Protocol (MCP / FastMCP)
+* **Testing:** pytest (11 unit tests covering database transactions and queries)
+
+---
+
+## 🚀 Quickstart & Setup
+
+### 1. Installation
+Clone the repository and install dependencies:
+
+```bash
+git clone [https://github.com/JacobW2000/sqlite-mcp-server.git](https://github.com/JacobW2000/sqlite-mcp-server.git)
+cd sqlite-mcp-server
+python -m venv venv
+
+# On Windows:
+.\venv\Scripts\activate
+
+# On macOS/Linux:
+# source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+### 2. Integration with Claude Desktop
+Add the server configuration to your `claude_desktop_config.json`:
+
+* **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+* **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "employee-database": {
+      "command": "python",
+      "args": [
+        "C:/path/to/sqlite-mcp-server/server.py"
+      ]
+    }
+  }
+}
+```
+
+---
+
+## 🧪 Testing
+
+This project includes 11 automated pytest tests covering database operations, transaction safety, and employee queries:
 
 ```bash
 python -m pytest tests/test_database.py
